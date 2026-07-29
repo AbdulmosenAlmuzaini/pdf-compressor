@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حزمة خدمات الـ PDF الشاملة - أدوات سريعة وآمنة 100%</title>
+    
+    <!-- Google Fonts - Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-file-shield"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>حقيبة الـ PDF</h2>
+                    <span>حزمة أدوات محلية وآمنة</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-target="dashboard">
+                    <i class="fa-solid fa-house"></i>
+                    <span>لوحة التحكم</span>
+                </button>
+                <div class="nav-divider">الأدوات المتاحة</div>
+                <button class="nav-item" data-target="merge">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>دمج ملفات PDF</span>
+                </button>
+                <button class="nav-item" data-target="split">
+                    <i class="fa-solid fa-scissors"></i>
+                    <span>تقسيم ملف PDF</span>
+                </button>
+                <button class="nav-item" data-target="organizer">
+                    <i class="fa-solid fa-square-poll-horizontal"></i>
+                    <span>ترتيب وتدوير الصفحات</span>
+                </button>
+                <button class="nav-item" data-target="images">
+                    <i class="fa-solid fa-images"></i>
+                    <span>تحويل الصور لـ PDF</span>
+                </button>
+                <button class="nav-item" data-target="numbering">
+                    <i class="fa-solid fa-list-ol"></i>
+                    <span>ترقيم الصفحات</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="theme-toggle" class="btn-theme-toggle">
+                    <i class="fa-solid fa-moon"></i>
+                    <span>المظهر الداكن</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <header class="workspace-header">
+                <div class="menu-toggle" id="menu-toggle-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+                <h1 id="active-tool-title">لوحة التحكم الرئيسيّة</h1>
+                <p id="active-tool-description">اختر إحدى الخدمات الآمنة أدناه لبدء المعالجة مباشرة داخل متصفحك.</p>
+            </header>
+
+            <div class="workspace-content">
+                <!-- PANEL: Dashboard -->
+                <section class="pane active" id="pane-dashboard">
+                    <div class="welcome-card">
+                        <div class="welcome-text">
+                            <h2>أهلاً بك في حقيبة الـ PDF الشاملة! 🚀</h2>
+                            <p>جميع الأدوات تعمل بالكامل محلياً داخل متصفحك. ملفاتك لا يتم رفعها أو مشاركتها مع أي خوادم خارجية، مما يضمن أمان وخصوصية بياناتك بنسبة 100%.</p>
+                        </div>
+                        <div class="welcome-badge">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>خصوصية مطلقة</span>
+                        </div>
+                    </div>
+
+                    <div class="tools-grid">
+                        <div class="tool-card" data-action="merge">
+                            <div class="tool-icon color-merge">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+                            <h3>دمج ملفات PDF</h3>
+                            <p>قم بجمع وتنسيق عدة ملفات PDF في مستند واحد مرتب بسلاسة تامة.</p>
+                            <span class="tool-link">ابدأ الآن <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+
+                        <div class="tool-card" data-action="split">
+                            <div class="tool-icon color-split">
+                                <i class="fa-solid fa-scissors"></i>
+                            </div>
+                            <h3>تقسيم ملف PDF</h3>
+                            <p>قم باستخراج نطاق معين من الصفحات أو افصل كل صفحة في مستند مستقل.</p>
+                            <span class="tool-link">ابدأ الآن <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+
+                        <div class="tool-card" data-action="organizer">
+                            <div class="tool-icon color-organizer">
+                                <i class="fa-solid fa-square-poll-horizontal"></i>
+                            </div>
+                            <h3>ترتيب وتدوير الصفحات</h3>
+                            <p>اعرض مستندك كصور مصغرة، أعد ترتيب الصفحات، قم بتدويرها أو حذفها.</p>
+                            <span class="tool-link">ابدأ الآن <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+
+                        <div class="tool-card" data-action="images">
+                            <div class="tool-icon color-images">
+                                <i class="fa-solid fa-images"></i>
+                            </div>
+                            <h3>تحويل الصور لـ PDF</h3>
+                            <p>حول مجموعة من الصور (PNG, JPG) إلى ملف PDF منسق بضغطة زر.</p>
+                            <span class="tool-link">ابدأ الآن <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+
+                        <div class="tool-card" data-action="numbering">
+                            <div class="tool-icon color-numbering">
+                                <i class="fa-solid fa-list-ol"></i>
+                            </div>
+                            <h3>ترقيم صفحات PDF</h3>
+                            <p>أضف أرقام صفحات تلقائية بلمسة احترافية في أي موقع تختاره.</p>
+                            <span class="tool-link">ابدأ الآن <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANEL: Merge PDF -->
+                <section class="pane" id="pane-merge">
+                    <div class="tool-split-layout">
+                        <!-- Dropzone -->
+                        <div class="drop-zone" id="merge-drop-zone">
+                            <input type="file" id="merge-file-input" multiple accept=".pdf" class="file-input-hidden">
+                            <div class="drop-zone-content">
+                                <div class="upload-illustration color-merge-bg">
+                                    <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
+                                </div>
+                                <h3>اسحب ملفات PDF وأفلتها هنا للدمج</h3>
+                                <p>أو انقر هنا لتصفح الملفات من جهازك</p>
+                            </div>
+                        </div>
+
+                        <!-- Panel list card -->
+                        <div class="card file-list-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-list-ol text-merge"></i>
+                                    <h3>الملفات المضافة للدمج</h3>
+                                    <span class="badge badge-merge" id="merge-file-count">0 ملفات</span>
+                                </div>
+                                <button id="merge-clear-all-btn" class="btn btn-danger-outline btn-sm" disabled>
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span>مسح الكل</span>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="empty-state" id="merge-empty-state">
+                                    <div class="empty-icon"><i class="fa-regular fa-file-pdf"></i></div>
+                                    <h4>لا توجد ملفات مرفوعة حالياً</h4>
+                                    <p>اسحب ملفات PDF إلى المنطقة المخصصة أو اضغط لتصفحها والبدء في دمجها.</p>
+                                </div>
+                                <ul class="file-list" id="merge-file-list"></ul>
+                            </div>
+                            <div class="card-footer">
+                                <div class="list-summary">
+                                    <span class="summary-item">
+                                        <i class="fa-solid fa-chart-pie"></i>
+                                        <span class="summary-label">الحجم الإجمالي:</span>
+                                        <span class="summary-value" id="merge-total-size">0.00 ميجابايت</span>
+                                    </span>
+                                </div>
+                                <button id="merge-action-btn" class="btn btn-primary btn-block btn-merge-grad" disabled>
+                                    <i class="fa-solid fa-layer-group"></i>
+                                    <span>دمج الملفات الآن</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANEL: Split PDF -->
+                <section class="pane" id="pane-split">
+                    <div class="tool-split-layout">
+                        <!-- Dropzone -->
+                        <div class="drop-zone" id="split-drop-zone">
+                            <input type="file" id="split-file-input" accept=".pdf" class="file-input-hidden">
+                            <div class="drop-zone-content">
+                                <div class="upload-illustration color-split-bg">
+                                    <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
+                                </div>
+                                <h3>اسحب ملف PDF وأفلته هنا للتقسيم</h3>
+                                <p>أو انقر لتحديد ملف واحد من جهازك</p>
+                            </div>
+                        </div>
+
+                        <!-- Settings & Action Card -->
+                        <div class="card settings-card" id="split-settings-card" style="opacity: 0.5; pointer-events: none;">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-sliders text-split"></i>
+                                    <h3>خيارات تقسيم الـ PDF</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Uploaded File Info -->
+                                <div class="uploaded-file-banner" id="split-file-banner" style="display: none;">
+                                    <i class="fa-solid fa-file-pdf text-split"></i>
+                                    <div class="banner-info">
+                                        <span class="banner-filename" id="split-filename">filename.pdf</span>
+                                        <span class="banner-meta" id="split-filemeta">الحجم: 0 بايت | عدد الصفحات: 0</span>
+                                    </div>
+                                    <button class="btn-icon-subtle btn-delete" id="split-remove-file" title="إزالة الملف">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">طريقة التقسيم:</label>
+                                    <div class="radio-group">
+                                        <label class="radio-option">
+                                            <input type="radio" name="split-type" value="range" checked id="split-type-range">
+                                            <span class="radio-box"></span>
+                                            <span class="radio-text">
+                                                <strong>استخراج نطاق محدد من الصفحات</strong>
+                                                <small>دمج الصفحات المحددة في ملف PDF جديد واحد.</small>
+                                            </span>
+                                        </label>
+
+                                        <label class="radio-option">
+                                            <input type="radio" name="split-type" value="all" id="split-type-all">
+                                            <span class="radio-box"></span>
+                                            <span class="radio-text">
+                                                <strong>فصل جميع الصفحات</strong>
+                                                <small>تصدير كل صفحة كملف PDF مستقل بملف ZIP واحد.</small>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="split-range-group">
+                                    <label class="form-label" for="split-range-input">نطاق الصفحات المطلوب استخراجه:</label>
+                                    <input type="text" id="split-range-input" class="form-control" placeholder="مثال: 1, 3-5, 8">
+                                    <span class="form-hint">يمكنك كتابة صفحات فردية أو نطاقات مفصولة بفاصلة. مثال: `1, 3-5, 7`.</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button id="split-action-btn" class="btn btn-primary btn-block btn-split-grad">
+                                    <i class="fa-solid fa-scissors"></i>
+                                    <span>بدء تقسيم وتصدير الملف</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANEL: Organize & Rotate Pages -->
+                <section class="pane" id="pane-organizer">
+                    <!-- Dropzone (Visible when empty) -->
+                    <div class="drop-zone" id="organizer-drop-zone">
+                        <input type="file" id="organizer-file-input" accept=".pdf" class="file-input-hidden">
+                        <div class="drop-zone-content">
+                            <div class="upload-illustration color-organizer-bg">
+                                <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
+                            </div>
+                            <h3>اسحب ملف PDF وأفلته هنا لترتيب وتدوير الصفحات</h3>
+                            <p>أو انقر هنا لتصفح وتحديد الملف</p>
+                        </div>
+                    </div>
+
+                    <!-- Workspace (Visible when file loaded) -->
+                    <div class="organizer-workspace" id="organizer-workspace" style="display: none;">
+                        <div class="workspace-toolbar">
+                            <div class="toolbar-file-info">
+                                <i class="fa-solid fa-file-pdf text-organizer"></i>
+                                <span class="toolbar-filename" id="organizer-filename">filename.pdf</span>
+                                <span class="badge badge-organizer" id="organizer-page-count">0 صفحة</span>
+                            </div>
+                            <div class="toolbar-actions">
+                                <button id="organizer-clear-btn" class="btn btn-danger-outline btn-sm">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span>إلغاء الملف</span>
+                                </button>
+                                <button id="organizer-action-btn" class="btn btn-primary btn-organizer-grad">
+                                    <i class="fa-solid fa-square-poll-horizontal"></i>
+                                    <span>حفظ وتصدير الملف الجديد</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="organizer-helper-text">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>اسحب الصفحات وأفلتها لإعادة ترتيب المستند. استخدم أزرار التحكم لتدوير الصفحات الفردية أو حذفها.</span>
+                        </div>
+
+                        <!-- Dynamic Grid of Pages -->
+                        <div class="organizer-grid" id="organizer-grid"></div>
+                    </div>
+                </section>
+
+                <!-- PANEL: Images to PDF -->
+                <section class="pane" id="pane-images">
+                    <div class="tool-split-layout">
+                        <!-- Dropzone -->
+                        <div class="drop-zone" id="images-drop-zone">
+                            <input type="file" id="images-file-input" multiple accept="image/png, image/jpeg, image/jpg" class="file-input-hidden">
+                            <div class="drop-zone-content">
+                                <div class="upload-illustration color-images-bg">
+                                    <i class="fa-solid fa-images animate-bounce"></i>
+                                </div>
+                                <h3>اسحب الصور (PNG, JPG) وأفلتها هنا للتحويل</h3>
+                                <p>أو انقر هنا لتصفح الصور وتحديدها</p>
+                            </div>
+                        </div>
+
+                        <!-- Images list -->
+                        <div class="card file-list-card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-image text-images"></i>
+                                    <h3>الصور المضافة للتحويل</h3>
+                                    <span class="badge badge-images" id="images-file-count">0 صورة</span>
+                                </div>
+                                <button id="images-clear-all-btn" class="btn btn-danger-outline btn-sm" disabled>
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span>مسح الكل</span>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="empty-state" id="images-empty-state">
+                                    <div class="empty-icon"><i class="fa-regular fa-image"></i></div>
+                                    <h4>لا توجد صور مرفوعة حالياً</h4>
+                                    <p>اسحب صور PNG أو JPG إلى المنطقة المخصصة أو اضغط لتصفحها والبدء في دمجها كـ PDF.</p>
+                                </div>
+                                <ul class="file-list" id="images-file-list"></ul>
+                            </div>
+                            <div class="card-footer">
+                                <div class="list-summary">
+                                    <span class="summary-item">
+                                        <i class="fa-solid fa-chart-pie"></i>
+                                        <span class="summary-label">الحجم الإجمالي:</span>
+                                        <span class="summary-value" id="images-total-size">0.00 ميجابايت</span>
+                                    </span>
+                                </div>
+                                <button id="images-action-btn" class="btn btn-primary btn-block btn-images-grad" disabled>
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span>تحويل الصور لـ PDF الآن</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANEL: Page Numbering -->
+                <section class="pane" id="pane-numbering">
+                    <div class="tool-split-layout">
+                        <!-- Dropzone -->
+                        <div class="drop-zone" id="numbering-drop-zone">
+                            <input type="file" id="numbering-file-input" accept=".pdf" class="file-input-hidden">
+                            <div class="drop-zone-content">
+                                <div class="upload-illustration color-numbering-bg">
+                                    <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
+                                </div>
+                                <h3>اسحب ملف PDF وأفلته هنا لترقيمه</h3>
+                                <p>أو انقر هنا لتصفح الملف وتحديده</p>
+                            </div>
+                        </div>
+
+                        <!-- Settings & Action Card -->
+                        <div class="card settings-card" id="numbering-settings-card" style="opacity: 0.5; pointer-events: none;">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-sliders text-numbering"></i>
+                                    <h3>خيارات ترقيم الصفحات</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Uploaded File Info -->
+                                <div class="uploaded-file-banner" id="numbering-file-banner" style="display: none;">
+                                    <i class="fa-solid fa-file-pdf text-numbering"></i>
+                                    <div class="banner-info">
+                                        <span class="banner-filename" id="numbering-filename">filename.pdf</span>
+                                        <span class="banner-meta" id="numbering-filemeta">الحجم: 0 بايت | عدد الصفحات: 0</span>
+                                    </div>
+                                    <button class="btn-icon-subtle btn-delete" id="numbering-remove-file" title="إزالة الملف">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group flex-1">
+                                        <label class="form-label" for="num-format-input">صيغة الترقيم:</label>
+                                        <select id="num-format-input" class="form-control">
+                                            <option value="{page}">أرقام فقط (1، 2، 3)</option>
+                                            <option value="صفحة {page} من {total}">صفحة X من Y</option>
+                                            <option value="{page} / {total}">X / Y</option>
+                                            <option value="- {page} -">- X -</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group flex-1">
+                                        <label class="form-label" for="num-start-input">رقم البداية:</label>
+                                        <input type="number" id="num-start-input" class="form-control" value="1" min="1">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">موضع الترقيم:</label>
+                                    <div class="position-selector-grid">
+                                        <label class="pos-option">
+                                            <input type="radio" name="num-position" value="top-left">
+                                            <div class="pos-box">أعلى يسار</div>
+                                        </label>
+                                        <label class="pos-option">
+                                            <input type="radio" name="num-position" value="top-center">
+                                            <div class="pos-box">أعلى وسط</div>
+                                        </label>
+                                        <label class="pos-option">
+                                            <input type="radio" name="num-position" value="top-right">
+                                            <div class="pos-box">أعلى يمين</div>
+                                        </label>
+                                        <label class="pos-option">
+                                            <input type="radio" name="num-position" value="bottom-left">
+                                            <div class="pos-box">أسفل يسار</div>
+                                        </label>
+                                        <label class="pos-option">
+                                            <input type="radio" name="num-position" value="bottom-center" checked>
+                                            <div class="pos-box">أسفل وسط</div>
+                                        </label>
+                                        <label class="pos-option">
+                                            <input type="radio" name="num-position" value="bottom-right">
+                                            <div class="pos-box">أسفل يمين</div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group flex-1">
+                                        <label class="form-label" for="num-color-input">لون الأرقام:</label>
+                                        <div class="color-picker-wrapper">
+                                            <input type="color" id="num-color-input" class="color-picker-input" value="#000000">
+                                            <span class="color-picker-hex" id="num-color-hex">#000000</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group flex-1">
+                                        <label class="form-label" for="num-size-input">حجم الخط (بكسل):</label>
+                                        <input type="number" id="num-size-input" class="form-control" value="12" min="6" max="36">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button id="numbering-action-btn" class="btn btn-primary btn-block btn-numbering-grad">
+                                    <i class="fa-solid fa-list-ol"></i>
+                                    <span>ترقيم الصفحات وتصدير الملف</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Footer Info -->
+            <footer class="app-footer">
+                <p>جميع عمليات المعالجة تتم محلياً 100% باستخدام مكتبات <a href="https://pdf-lib.js.org/" target="_blank">pdf-lib.js</a> و <a href="https://mozilla.github.io/pdf.js/" target="_blank">pdf.js</a>. ملفاتك آمنة تماماً.</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Processing / Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-card">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+                <div class="spinner-icon">
+                    <i class="fa-solid fa-file-shield"></i>
+                </div>
+            </div>
+            <h3 id="loading-title">جاري معالجة طلبك...</h3>
+            <p id="loading-message">يرجى الانتظار، تتم المعالجة بالكامل داخل المتصفح.</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Custom Confirm Modal -->
+    <div class="confirm-modal-overlay" id="confirm-modal">
+        <div class="confirm-modal-card">
+            <div class="confirm-modal-icon">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <h3 id="confirm-modal-title">تأكيد العملية</h3>
+            <p id="confirm-modal-message">هل أنت متأكد من رغبتك في الاستمرار؟</p>
+            <div class="confirm-modal-actions">
+                <button id="confirm-modal-yes" class="btn btn-primary">حسناً</button>
+                <button id="confirm-modal-no" class="btn btn-danger-outline">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Libraries via CDN -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- App Logic Script -->
+    <script src="app.js"></script>
+</body>
+</html>
