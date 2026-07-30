@@ -482,6 +482,8 @@
                             </div>
                         </div>
                     </div>
+                </section>
+
                 <!-- PANEL: Text Extraction (OCR) -->
                 <section class="pane" id="pane-ocr">
                     <div class="tool-split-layout">
@@ -517,13 +519,6 @@
                                     <button class="btn-icon-subtle btn-delete" id="ocr-remove-file" title="إزالة الملف">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
-                                </div>
-
-                                <!-- API Key Input -->
-                                <div class="form-group" style="margin-bottom: 1.25rem;">
-                                    <label class="form-label" for="ocr-api-key-input">مفتاح Gemini API Key:</label>
-                                    <input type="password" id="ocr-api-key-input" class="form-control" placeholder="أدخل مفتاح الـ API للربط...">
-                                    <span class="form-hint">ملاحظة: يتم تخزين المفتاح محلياً في متصفحك بشكل آمن ولا يرسل لأي خادم خارجي.</span>
                                 </div>
 
                                 <!-- Action button to start extraction -->
@@ -602,6 +597,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <!-- App Logic Script -->
-    <script src="app.js"></script>
+    <script src="app.js?v=2.0"></script>
 </body>
 </html>

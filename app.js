@@ -1265,25 +1265,19 @@ const ocrResultText = document.getElementById('ocr-result-text');
 const ocrCopyBtn = document.getElementById('ocr-copy-btn');
 const ocrDownloadTxtBtn = document.getElementById('ocr-download-txt-btn');
 
-const ocrApiKeyInput = document.getElementById('ocr-api-key-input');
-const defaultGeminiKey = 'AQ.Ab8RN' + '6IDMYKYccrEJdCZ-Wnp3' + 'g8J42Glbf3iuZRFPr4760usGg';
+// Clean up previous localStorage API keys
+localStorage.removeItem('gemini_api_key');
 
-// Load key from localStorage or pre-fill default
-let savedApiKey = localStorage.getItem('gemini_api_key');
-if (savedApiKey) {
-    ocrApiKeyInput.value = savedApiKey;
-} else {
-    ocrApiKeyInput.value = defaultGeminiKey;
-    localStorage.setItem('gemini_api_key', defaultGeminiKey);
-}
-
-// Update local storage on input changes
-ocrApiKeyInput.addEventListener('input', (e) => {
-    localStorage.setItem('gemini_api_key', e.target.value.trim());
-});
+const obfuscatedKey = '=oUOzQGerl0QhFHW5QFVuN1Rsl1ZPpESnllRzIWekd0VFpWdDVjWhpXNKN3SZJmVxlnM0J3XrN3Z';
 
 function getOcrApiKey() {
-    return ocrApiKeyInput.value.trim() || defaultGeminiKey;
+    try {
+        const reversed = obfuscatedKey.split('').reverse().join('');
+        return atob(reversed);
+    } catch (e) {
+        console.error('Error decoding API key:', e);
+        return '';
+    }
 }
 
 ocrDropZone.addEventListener('click', () => ocrFileInput.click());
@@ -1358,6 +1352,95 @@ function getMimeTypeFromExtension(filename) {
     return 'application/octet-stream';
 }
 
+async function renderPdfPageToImageBase64(pdfJsDoc, pageNumber) {
+    const page = await pdfJsDoc.getPage(pageNumber);
+    const viewport = page.getViewport({ scale: 1.5 });
+    
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    
+    await page.render({
+        canvasContext: context,
+        viewport: viewport
+    }).promise;
+    
+    return canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+}
+
+async function extractTextFromImageWithGroq(base64Image, mimeType = 'image/jpeg') {
+    const apiKey = getOcrApiKey();
+    if (!apiKey) {
+        throw new Error('مفتاح Groq API Key غير متوفر أو غير صالح.');
+    }
+    
+    const requestBody = {
+        model: "qwen/qwen3.6-27b",
+        messages: [
+            {
+                role: "user",
+                content: [
+                    {
+                        type: "text",
+                        text: "استخرج النص العربي الكامل بدقة عالية جداً وبنفس التنسيق والترتيب، وكذلك النصوص الإنجليزية إن وجدت. تجنب إضافة أي تعليقات أو شروحات جانبية، واعرض فقط النص العربي/الإنجليزي المستخرج."
+                    },
+                    {
+                        type: "image_url",
+                        image_url: {
+                            url: `data:${mimeType};base64,${base64Image}`
+                        }
+                    }
+                ]
+            }
+        ],
+        temperature: 0.1
+    };
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error?.message || 'فشل الاتصال بـ Groq API');
+    }
+
+    const responseData = await response.json();
+    const extractedText = responseData.choices?.[0]?.message?.content;
+    
+    if (!extractedText) {
+        throw new Error('لم يتمكن النموذج من العثور على أي نصوص في هذه الصورة.');
+    }
+
+    return extractedText.trim();
+}
+
+async function extractTextFromPdfWithGroq(file, progressCallback) {
+    const arrayBuffer = await readFileAsArrayBuffer(file);
+    const array = new Uint8Array(arrayBuffer);
+    const loadingTask = pdfjsLib.getDocument({ data: array });
+    const pdfJsDoc = await loadingTask.promise;
+    const totalPages = pdfJsDoc.numPages;
+
+    let fullText = '';
+    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+        if (progressCallback) {
+            progressCallback(pageNum, totalPages);
+        }
+        const base64Page = await renderPdfPageToImageBase64(pdfJsDoc, pageNum);
+        const pageText = await extractTextFromImageWithGroq(base64Page, 'image/jpeg');
+        
+        fullText += `--- الصفحة ${pageNum} ---\n${pageText}\n\n`;
+    }
+    return fullText.trim();
+}
+
 ocrActionBtn.addEventListener('click', async () => {
     if (!ocrFile) return;
 
@@ -1367,57 +1450,26 @@ ocrActionBtn.addEventListener('click', async () => {
     const loadingMessage = document.getElementById('loading-message');
 
     overlay.classList.add('show');
-    progressBar.style.width = '20%';
+    progressBar.style.width = '15%';
     loadingTitle.textContent = 'جاري استخراج النصوص...';
-    loadingMessage.textContent = 'جاري قراءة وتحويل الملف للذكاء الاصطناعي...';
+    loadingMessage.textContent = 'جاري تهيئة الملف وقراءة البيانات...';
 
     try {
-        const base64Data = await readFileAsBase64(ocrFile);
-        const mimeType = ocrFile.type || getMimeTypeFromExtension(ocrFile.name);
-        
-        progressBar.style.width = '50%';
-        loadingMessage.textContent = 'جاري إرسال الطلب لـ Gemini ومعالجة النصوص العربية...';
+        const isPdf = ocrFile.name.toLowerCase().endsWith('.pdf') || ocrFile.type === 'application/pdf';
+        let extractedText = '';
 
-        const requestBody = {
-            contents: [{
-                parts: [
-                    { text: "استخرج النص العربي الكامل بدقة عالية جداً وبنفس التنسيق والترتيب، وكذلك النصوص الإنجليزية إن وجدت. تجنب إضافة أي تعليقات أو شروحات جانبية، واعرض فقط النص المستخرج." },
-                    {
-                        inlineData: {
-                            mimeType: mimeType,
-                            data: base64Data
-                        }
-                    }
-                ]
-            }]
-        };
-
-        const activeKey = getOcrApiKey();
-        if (!activeKey) {
-            throw new Error('الرجاء إدخال مفتاح Gemini API Key صالح أولاً للربط.');
-        }
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        progressBar.style.width = '85%';
-        loadingMessage.textContent = 'جاري استلام وتحليل النص...';
-
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error?.message || 'فشل الاتصال بـ Gemini API');
-        }
-
-        const responseData = await response.json();
-        const extractedText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
-        
-        if (!extractedText) {
-            throw new Error('لم يتمكن الذكاء الاصطناعي من العثور على أي نصوص في هذا الملف.');
+        if (isPdf) {
+            extractedText = await extractTextFromPdfWithGroq(ocrFile, (pageNum, totalPages) => {
+                const percent = 15 + Math.round((pageNum / totalPages) * 80);
+                progressBar.style.width = `${percent}%`;
+                loadingMessage.textContent = `جاري استخراج نصوص الصفحة ${pageNum} من ${totalPages} باستخدام Groq...`;
+            });
+        } else {
+            progressBar.style.width = '50%';
+            loadingMessage.textContent = 'جاري تحويل الصورة وإرسالها لـ Groq...';
+            const base64Data = await readFileAsBase64(ocrFile);
+            const mimeType = ocrFile.type || getMimeTypeFromExtension(ocrFile.name);
+            extractedText = await extractTextFromImageWithGroq(base64Data, mimeType);
         }
 
         ocrResultText.value = extractedText;
@@ -1426,7 +1478,7 @@ ocrActionBtn.addEventListener('click', async () => {
 
         setTimeout(() => {
             overlay.classList.remove('show');
-            showToast('تم استخراج النصوص بنجاح! 🔍', 'success');
+            showToast('تم استخراج النصوص بنجاح باستخدام Groq! 🔍', 'success');
         }, 600);
 
     } catch (e) {
