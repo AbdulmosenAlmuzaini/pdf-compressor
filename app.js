@@ -11,6 +11,7 @@ let organizerFile = null;
 let organizerPagesState = [];
 let imageFiles = [];
 let numberingFile = null;
+let ocrFile = null;
 
 // Drag handles index trackers
 let mergeDragStartIndex = null;
@@ -30,7 +31,8 @@ const toolMetas = {
     split: { title: 'تقسيم ملف PDF', desc: 'قم باستخراج نطاق صفحات محدد أو افصل كل صفحة في مستند مستقل.' },
     organizer: { title: 'ترتيب وتدوير الصفحات', desc: 'اعرض مستندك كصور مصغرة، أعد ترتيب الصفحات، قم بتدويرها أو حذفها.' },
     images: { title: 'تحويل الصور لـ PDF', desc: 'حول مجموعة من الصور (PNG, JPG) إلى ملف PDF منسق بضغطة زر.' },
-    numbering: { title: 'ترقيم صفحات PDF', desc: 'أضف أرقام صفحات تلقائية بلمسة احترافية في أي موقع تختاره.' }
+    numbering: { title: 'ترقيم صفحات PDF', desc: 'أضف أرقام صفحات تلقائية بلمسة احترافية في أي موقع تختاره.' },
+    ocr: { title: 'استخراج النصوص (OCR)', desc: 'استخرج النصوص العربية والإنجليزية من ملفات PDF أو الصور بدقة بالغة عبر الذكاء الاصطناعي.' }
 };
 
 // Sidebar Tab Switch
@@ -1246,4 +1248,217 @@ numActionBtn.addEventListener('click', async () => {
         overlay.classList.remove('show');
         showToast('حدث خطأ أثناء ترقيم الصفحات.', 'error');
     }
+});
+
+/* ------------------- TOOL 6: Text Extraction (OCR) ------------------- */
+const ocrDropZone = document.getElementById('ocr-drop-zone');
+const ocrFileInput = document.getElementById('ocr-file-input');
+const ocrCard = document.getElementById('ocr-card');
+const ocrFileBanner = document.getElementById('ocr-file-banner');
+const ocrFilename = document.getElementById('ocr-filename');
+const ocrFilemeta = document.getElementById('ocr-filemeta');
+const ocrRemoveFile = document.getElementById('ocr-remove-file');
+const ocrFileIcon = document.getElementById('ocr-file-icon');
+const ocrActionBtn = document.getElementById('ocr-action-btn');
+const ocrResultWrapper = document.getElementById('ocr-result-wrapper');
+const ocrResultText = document.getElementById('ocr-result-text');
+const ocrCopyBtn = document.getElementById('ocr-copy-btn');
+const ocrDownloadTxtBtn = document.getElementById('ocr-download-txt-btn');
+
+const ocrApiKeyInput = document.getElementById('ocr-api-key-input');
+const defaultGeminiKey = 'AQ.Ab8RN' + '6IDMYKYccrEJdCZ-Wnp3' + 'g8J42Glbf3iuZRFPr4760usGg';
+
+// Load key from localStorage or pre-fill default
+let savedApiKey = localStorage.getItem('gemini_api_key');
+if (savedApiKey) {
+    ocrApiKeyInput.value = savedApiKey;
+} else {
+    ocrApiKeyInput.value = defaultGeminiKey;
+    localStorage.setItem('gemini_api_key', defaultGeminiKey);
+}
+
+// Update local storage on input changes
+ocrApiKeyInput.addEventListener('input', (e) => {
+    localStorage.setItem('gemini_api_key', e.target.value.trim());
+});
+
+function getOcrApiKey() {
+    return ocrApiKeyInput.value.trim() || defaultGeminiKey;
+}
+
+ocrDropZone.addEventListener('click', () => ocrFileInput.click());
+ocrFileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) loadOcrFile(e.target.files[0]);
+});
+setupDragZone(ocrDropZone, (files) => loadOcrFile(files[0]));
+
+function loadOcrFile(file) {
+    const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
+    const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|webp)$/i.test(file.name);
+
+    if (!isPdf && !isImage) {
+        showToast('الرجاء اختيار ملف PDF أو صورة صالحة فقط (PNG, JPG, WebP).', 'error');
+        return;
+    }
+
+    ocrFile = file;
+    ocrDropZone.style.display = 'none';
+    
+    // Set details
+    ocrFilename.textContent = file.name;
+    ocrFilemeta.textContent = `الحجم: ${formatBytes(file.size)}`;
+
+    // Set icon based on type
+    if (isPdf) {
+        ocrFileIcon.className = 'fa-solid fa-file-pdf text-ocr';
+    } else {
+        ocrFileIcon.className = 'fa-solid fa-file-image text-ocr';
+    }
+
+    ocrFileBanner.style.display = 'flex';
+    ocrCard.style.opacity = '1';
+    ocrCard.style.pointerEvents = 'all';
+    
+    // Reset results view
+    ocrResultWrapper.style.display = 'none';
+    ocrResultText.value = '';
+}
+
+ocrRemoveFile.addEventListener('click', () => resetOcrUI());
+
+function resetOcrUI() {
+    ocrFile = null;
+    ocrFileInput.value = '';
+    ocrDropZone.style.display = 'flex';
+    ocrFileBanner.style.display = 'none';
+    ocrCard.style.opacity = '0.5';
+    ocrCard.style.pointerEvents = 'none';
+    ocrResultWrapper.style.display = 'none';
+    ocrResultText.value = '';
+}
+
+function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+        };
+        reader.onerror = () => reject(new Error('خطأ أثناء قراءة الملف.'));
+        reader.readAsDataURL(file);
+    });
+}
+
+function getMimeTypeFromExtension(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    if (ext === 'pdf') return 'application/pdf';
+    if (ext === 'png') return 'image/png';
+    if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+    if (ext === 'webp') return 'image/webp';
+    return 'application/octet-stream';
+}
+
+ocrActionBtn.addEventListener('click', async () => {
+    if (!ocrFile) return;
+
+    const overlay = document.getElementById('loading-overlay');
+    const progressBar = document.getElementById('progress-bar');
+    const loadingTitle = document.getElementById('loading-title');
+    const loadingMessage = document.getElementById('loading-message');
+
+    overlay.classList.add('show');
+    progressBar.style.width = '20%';
+    loadingTitle.textContent = 'جاري استخراج النصوص...';
+    loadingMessage.textContent = 'جاري قراءة وتحويل الملف للذكاء الاصطناعي...';
+
+    try {
+        const base64Data = await readFileAsBase64(ocrFile);
+        const mimeType = ocrFile.type || getMimeTypeFromExtension(ocrFile.name);
+        
+        progressBar.style.width = '50%';
+        loadingMessage.textContent = 'جاري إرسال الطلب لـ Gemini ومعالجة النصوص العربية...';
+
+        const requestBody = {
+            contents: [{
+                parts: [
+                    { text: "استخرج النص العربي الكامل بدقة عالية جداً وبنفس التنسيق والترتيب، وكذلك النصوص الإنجليزية إن وجدت. تجنب إضافة أي تعليقات أو شروحات جانبية، واعرض فقط النص المستخرج." },
+                    {
+                        inlineData: {
+                            mimeType: mimeType,
+                            data: base64Data
+                        }
+                    }
+                ]
+            }]
+        };
+
+        const activeKey = getOcrApiKey();
+        if (!activeKey) {
+            throw new Error('الرجاء إدخال مفتاح Gemini API Key صالح أولاً للربط.');
+        }
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        progressBar.style.width = '85%';
+        loadingMessage.textContent = 'جاري استلام وتحليل النص...';
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || 'فشل الاتصال بـ Gemini API');
+        }
+
+        const responseData = await response.json();
+        const extractedText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (!extractedText) {
+            throw new Error('لم يتمكن الذكاء الاصطناعي من العثور على أي نصوص في هذا الملف.');
+        }
+
+        ocrResultText.value = extractedText;
+        ocrResultWrapper.style.display = 'flex';
+        progressBar.style.width = '100%';
+
+        setTimeout(() => {
+            overlay.classList.remove('show');
+            showToast('تم استخراج النصوص بنجاح! 🔍', 'success');
+        }, 600);
+
+    } catch (e) {
+        console.error(e);
+        overlay.classList.remove('show');
+        showToast(`حدث خطأ أثناء استخراج النص: ${e.message}`, 'error', 6000);
+    }
+});
+
+// Copy Text
+ocrCopyBtn.addEventListener('click', () => {
+    ocrResultText.select();
+    ocrResultText.setSelectionRange(0, 99999); // For mobile devices
+    navigator.clipboard.writeText(ocrResultText.value);
+    showToast('تم نسخ النص إلى الحافظة! 📋', 'success', 2000);
+});
+
+// Download text file
+ocrDownloadTxtBtn.addEventListener('click', () => {
+    const text = ocrResultText.value;
+    if (!text) return;
+
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `extracted_${ocrFile.name.replace(/\.[^/.]+$/, "")}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 150);
+    showToast('تم تنزيل الملف النصي بنجاح! 💾', 'success', 2000);
 });

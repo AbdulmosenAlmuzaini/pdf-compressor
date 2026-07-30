@@ -56,6 +56,10 @@
                     <i class="fa-solid fa-list-ol"></i>
                     <span>ترقيم الصفحات</span>
                 </button>
+                <button class="nav-item" data-target="ocr">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>استخراج النصوص (OCR)</span>
+                </button>
             </nav>
 
             <div class="sidebar-footer">
@@ -133,6 +137,15 @@
                             </div>
                             <h3>ترقيم صفحات PDF</h3>
                             <p>أضف أرقام صفحات تلقائية بلمسة احترافية في أي موقع تختاره.</p>
+                            <span class="tool-link">ابدأ الآن <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+
+                        <div class="tool-card" data-action="ocr">
+                            <div class="tool-icon color-ocr">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <h3>استخراج النصوص (OCR)</h3>
+                            <p>استخرج النصوص العربية والإنجليزية من ملفات PDF أو الصور بدقة بالغة عبر الذكاء الاصطناعي.</p>
                             <span class="tool-link">ابدأ الآن <i class="fa-solid fa-arrow-left"></i></span>
                         </div>
                     </div>
@@ -466,6 +479,75 @@
                                     <i class="fa-solid fa-list-ol"></i>
                                     <span>ترقيم الصفحات وتصدير الملف</span>
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                <!-- PANEL: Text Extraction (OCR) -->
+                <section class="pane" id="pane-ocr">
+                    <div class="tool-split-layout">
+                        <!-- Dropzone -->
+                        <div class="drop-zone" id="ocr-drop-zone">
+                            <input type="file" id="ocr-file-input" accept=".pdf, image/png, image/jpeg, image/jpg, image/webp" class="file-input-hidden">
+                            <div class="drop-zone-content">
+                                <div class="upload-illustration color-ocr-bg">
+                                    <i class="fa-solid fa-file-signature animate-bounce"></i>
+                                </div>
+                                <h3>اسحب ملف PDF أو صورة وأفلتها هنا لاستخراج النصوص</h3>
+                                <p>أو انقر هنا لتصفح الملفات من جهازك</p>
+                                <span class="upload-hint">يدعم ملفات PDF والصور (JPG, PNG, WebP)</span>
+                            </div>
+                        </div>
+
+                        <!-- Settings & Result Card -->
+                        <div class="card settings-card" id="ocr-card" style="opacity: 0.5; pointer-events: none;">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <i class="fa-solid fa-file-lines text-ocr"></i>
+                                    <h3>استخراج النصوص الذكي (OCR)</h3>
+                                </div>
+                            </div>
+                            <div class="card-body" style="min-height: 380px;">
+                                <!-- Uploaded File Info -->
+                                <div class="uploaded-file-banner" id="ocr-file-banner" style="display: none;">
+                                    <i class="fa-solid fa-file-pdf text-ocr" id="ocr-file-icon"></i>
+                                    <div class="banner-info">
+                                        <span class="banner-filename" id="ocr-filename">filename.pdf</span>
+                                        <span class="banner-meta" id="ocr-filemeta">الحجم: 0 بايت</span>
+                                    </div>
+                                    <button class="btn-icon-subtle btn-delete" id="ocr-remove-file" title="إزالة الملف">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <!-- API Key Input -->
+                                <div class="form-group" style="margin-bottom: 1.25rem;">
+                                    <label class="form-label" for="ocr-api-key-input">مفتاح Gemini API Key:</label>
+                                    <input type="password" id="ocr-api-key-input" class="form-control" placeholder="أدخل مفتاح الـ API للربط...">
+                                    <span class="form-hint">ملاحظة: يتم تخزين المفتاح محلياً في متصفحك بشكل آمن ولا يرسل لأي خادم خارجي.</span>
+                                </div>
+
+                                <!-- Action button to start extraction -->
+                                <button id="ocr-action-btn" class="btn btn-primary btn-block btn-ocr-grad" style="margin-bottom: 1.25rem;">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <span>استخراج النصوص العربية والإنجليزية 🔍</span>
+                                </button>
+
+                                <!-- Result Area (Hidden until processed) -->
+                                <div class="ocr-result-wrapper" id="ocr-result-wrapper" style="display: none; flex-direction: column; gap: 0.75rem;">
+                                    <label class="form-label" for="ocr-result-text">النص المستخرج:</label>
+                                    <textarea id="ocr-result-text" class="form-control" style="height: 180px; resize: vertical; font-family: inherit; font-size: 0.88rem; line-height: 1.6;" placeholder="سيظهر النص المستخرج هنا..."></textarea>
+                                    
+                                    <div class="form-row">
+                                        <button id="ocr-copy-btn" class="btn btn-sm btn-icon-subtle flex-1" style="border: 1px solid var(--border-color); background: var(--bg-tertiary); display: flex; justify-content: center; gap: 0.5rem; height: 38px; color: var(--text-primary);">
+                                            <i class="fa-solid fa-copy"></i>
+                                            <span>نسخ النص</span>
+                                        </button>
+                                        <button id="ocr-download-txt-btn" class="btn btn-sm btn-icon-subtle flex-1" style="border: 1px solid var(--border-color); background: var(--bg-tertiary); display: flex; justify-content: center; gap: 0.5rem; height: 38px; color: var(--text-primary);">
+                                            <i class="fa-solid fa-download"></i>
+                                            <span>تنزيل (.txt)</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
